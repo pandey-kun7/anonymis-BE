@@ -22,7 +22,7 @@ export const initSocket = (io) => {
             socket.join(groupId);
         })
 
-        socket.on("send-message", async ({ groupId, text }) => {
+        socket.on("send-message", async ({ groupId, text, senderTag }) => {
 
             if (!text || !groupId) return null;
 
@@ -30,6 +30,7 @@ export const initSocket = (io) => {
                 groupId,
                 senderId: socket.userId,
                 content: text,
+                senderTag
             })
 
             io.to(groupId).emit("receive-message", msg)

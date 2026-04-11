@@ -48,7 +48,7 @@ export const handleUserOtpVerification = async (req, res) => {
     res.status(200).json({
         success: true,
         message: "Verified successfully",
-        data: {"token":token,userId:user._id}
+        data: {"token":token,userId:user._id,userTag:user.userTag}
     })
 
 }
@@ -72,8 +72,11 @@ export const handleUserLogin = async (req, res) => {
         })
     }
 
+    const otp = Math.floor(100000 + Math.random() * 900000).toString();
+    await OTP.create({ email, otp, expiresAt: new Date(Date.now() + 5 * 60 * 1000) });
+
     res.status(200).json({
         success: true,
-        message: "Log in successful"
+        message: "OTP sent via email"
     })
 }
