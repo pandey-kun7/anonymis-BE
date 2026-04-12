@@ -7,6 +7,7 @@ import { connect } from "./configs/dbConnection.js";
 import { authRoutes } from "./routes/auth.route.js";
 import { initSocket } from "./configs/socket.js";
 import { groupRoutes } from "./routes/group.route.js";
+import { serviceRoutes } from "./routes/service.route.js";
 
 const app = express();
 
@@ -20,8 +21,10 @@ initSocket(io);
 app.use(cors({origin:"*"}))
 app.use(express.urlencoded({extended:false}))
 app.use(express.json());
+
 app.use("/api/auth",authRoutes);
 app.use("/api/group",groupRoutes)
+app.use("/api/service",serviceRoutes)
 
 server.listen(process.env.PORT,()=>{
     console.log(`Server started at http://localhost:${process.env.PORT}`)
