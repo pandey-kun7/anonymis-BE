@@ -8,6 +8,7 @@ import { authRoutes } from "./routes/auth.route.js";
 import { initSocket } from "./configs/socket.js";
 import { groupRoutes } from "./routes/group.route.js";
 import { serviceRoutes } from "./routes/service.route.js";
+import { deleteGroupsCronJob } from "./configs/deleteGroupsCron.js";
 
 const app = express();
 
@@ -25,6 +26,8 @@ app.use(express.json());
 app.use("/api/auth",authRoutes);
 app.use("/api/group",groupRoutes)
 app.use("/api/service",serviceRoutes)
+
+deleteGroupsCronJob(io);
 
 server.listen(process.env.PORT,()=>{
     console.log(`Server started at http://localhost:${process.env.PORT}`)
