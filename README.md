@@ -1,97 +1,88 @@
-# Anonymis Backend
+# Anonymis-BE
 
-Anonymis is a real-time, group chat application (backend). It features user authentication with OTP verification, group management, and real-time messaging using Socket.io.
+Anonymis-BE is a real-time messaging backend that supports temporary group chats. Groups are designed to be ephemeral, automatically deleting themselves and their message history after a specified expiration time.
 
-## Features
+## 🚀 Features
 
-- **Authentication**: User signup, login, and OTP-based email verification.
-- **Group Management**: Create chat groups, join existing groups, and fetch user-joined groups.
-- **Real-time Messaging**: Instant message delivery within groups using WebSockets (Socket.io).
-- **Message Persistence**: Chat history is stored and retrievable via REST APIs.
-- **Security**: JWT-based authentication for protected routes and socket connections.
+- **User Authentication**: Secure signup, login, and OTP-based verification using JWT and bcrypt.
+- **Temporary Group Chats**: Users can create and join chat groups using unique group codes.
+- **Ephemeral Messages**: A background cron job automatically deletes expired groups and their messages every minute.
+- **Real-time Communication**: Instant messaging and group status updates powered by Socket.io.
+- **User Management**: Search for users and update profile information.
 
-## Tech Stack
+## 🛠️ Tech Stack
 
-- **Node.js** & **Express**: Web framework.
-- **MongoDB** & **Mongoose**: Database and ODM.
-- **Socket.io**: Real-time bidirectional event-based communication.
-- **JSON Web Tokens (JWT)**: Secure authentication.
-- **Bcrypt**: Password hashing.
-- **Dotenv**: Environment variable management.
+- **Runtime**: Node.js
+- **Framework**: Express.js
+- **Database**: MongoDB (Mongoose)
+- **Real-time**: Socket.io
+- **Scheduling**: node-cron
+- **Security**: JWT (JSON Web Tokens), bcrypt
 
-## Prerequisites
+## 📁 Project Structure
 
-- [Node.js](https://nodejs.org/) (v14 or higher recommended)
-- [MongoDB](https://www.mongodb.com/try/download/community) (Local or Atlas)
-- NPM (comes with Node.js)
-
-## Getting Started
-
-### 1. Clone the Repository
-```bash
-git clone https://github.com/pandey-kun7/anonymis-BE.git
-cd anonymis-BE
+```text
+├── configs/            # Database, Socket.io, and Cron job configurations
+├── controllers/        # Business logic for auth, groups, and services
+├── middlewares/        # Authentication middleware
+├── models/             # Mongoose schemas (User, Group, Message, OTP)
+├── routes/             # Express API routes
+└── index.js            # Entry point of the application
 ```
 
-### 2. Install Dependencies
-```bash
-npm install
-```
+## 🚥 API Endpoints
 
-### 3. Environment Configuration
-Create a `.env` file in the root directory and add the following variables:
-```env
-PORT=3000
-MONGO_URI=your_mongodb_connection_string
-SECRET=your_jwt_secret_key
-# Add other necessary variables like SMTP details if OTP is sent via email
-```
+### Auth
+- `POST /api/auth/signup` - Register a new user.
+- `POST /api/auth/verify-otp` - Verify user OTP.
+- `POST /api/auth/login` - User login.
 
-### 4. Run the Application
-For development (using nodemon):
-```bash
-npm start
-```
-The server will start at `http://localhost:3000` (or your specified port).
+### Groups
+- `POST /api/group/create-group` - Create a new chat group (Auth required).
+- `POST /api/group/join-group` - Join a group via code (Auth required).
+- `GET /api/group/get-user-groups` - List groups the user belongs to (Auth required).
+- `GET /api/group/group-messages/:groupId` - Retrieve message history for a group (Auth required).
 
-## API Endpoints
+### Services
+- `POST /api/service/get-users` - Search for users (Auth required).
+- `PATCH /api/service/update-userInfo` - Update user profile (Auth required).
+- `GET /api/service/user-info/:email` - Fetch specific user details (Auth required).
 
-### Auth Routes (`/api/auth`)
-| Method | Endpoint | Description |
-|--------|----------|-------------|
-| POST | `/signup` | Register a new user |
-| POST | `/verify-otp` | Verify user OTP |
-| POST | `/login` | Login user and receive JWT |
+## ⚡ Socket.io Events
 
-### Group Routes (`/api/group`)
-*All group routes require a valid JWT in the Authorization header.*
-| Method | Endpoint | Description |
-|--------|----------|-------------|
-| POST | `/create-group` | Create a new chat group |
-| POST | `/join-group` | Join an existing group |
-| GET | `/get-user-groups` | Get all groups the user is part of |
-| GET | `/group-messages/:groupId` | Fetch message history for a group |
+- **Connection**: Requires a valid JWT in `handshake.auth.token`.
+- **Join**: `socket.emit("join", { groupId })` - Join a specific group room.
+- **Send Message**: `socket.emit("send-message", { groupId, text, senderTag })` - Send a message to a group.
+- **Receive Message**: `socket.on("receive-message", msg)` - Receive messages in real-time.
+- **Group Deleted**: `socket.on("group-deleted")` - Notified when the current group expires.
 
-## WebSocket Events
+## ⚙️ Setup & Installation
 
-The backend uses Socket.io for real-time communication. Authentication is required via the `auth` object in the handshake.
+1.  **Clone the repository**:
+    ```bash
+    git clone https://github.com/pandey-kun7/anonymis-BE.git
+    cd anonymis-BE
+    ```
 
-### Connection
-```javascript
-const socket = io("http://localhost:3000", {
-  auth: {
-    token: "YOUR_JWT_TOKEN"
-  }
-});
-```
+2.  **Install dependencies**:
+    ```bash
+    npm install
+    ```
 
-### Events
-- **`join`**: Emitted by client to join a specific group room.
-  - Payload: `{ groupId }`
-- **`send-message`**: Emitted by client to send a message.
-  - Payload: `{ groupId, text, senderTag }`
-- **`receive-message`**: Broadcasted by server to all users in the group room.
-  - Payload: `{ groupId, senderId, content, senderTag, createdAt }`
+3.  **Environment Variables**:
+    Create a `.env` file in the root directory and add the following:
+    ```env
+    PORT=your_port
+    MONGO_URI=your_mongodb_connection_string
+    SECRET=your_jwt_secret
+    ```
 
-## License
-This project is licensed under the ISC License.
+4.  **Run the application**:
+    ```bash
+    # For development (with nodemon)
+    npm start
+    ```
+
+## 📜 License
+
+This project is licensed under the [ISC License](LICENSE).
