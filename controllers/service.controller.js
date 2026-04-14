@@ -83,7 +83,7 @@ export const handleFetchUserInfo = async (req, res) => {
             data: user,
         })
     } catch (error) {
-        console.log(`Problem in handleFe`, error.message);
+        console.log(`Problem in handleFetchUserInfo`, error.message);
 
         return res.status(500).json({
             success: false,

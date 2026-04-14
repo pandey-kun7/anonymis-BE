@@ -4,9 +4,9 @@ Anonymis-BE is a real-time messaging backend that supports temporary group chats
 
 ## 🚀 Features
 
-- **User Authentication**: Secure signup, login, and OTP-based verification using JWT and bcrypt.
+- **User Authentication**: Secure signup, login, and email OTP-based verification using Nodemailer, JWT, and bcrypt.
 - **Temporary Group Chats**: Users can create and join chat groups using unique group codes.
-- **Ephemeral Messages**: A background cron job automatically deletes expired groups and their messages every minute.
+- **Automated Cleanup**: Background cron jobs automatically delete expired groups, their message history (every minute), and unverified users (every 5 minutes).
 - **Real-time Communication**: Instant messaging and group status updates powered by Socket.io.
 - **User Management**: Search for users and update profile information.
 
@@ -16,6 +16,7 @@ Anonymis-BE is a real-time messaging backend that supports temporary group chats
 - **Framework**: Express.js
 - **Database**: MongoDB (Mongoose)
 - **Real-time**: Socket.io
+- **Mailing**: Nodemailer
 - **Scheduling**: node-cron
 - **Security**: JWT (JSON Web Tokens), bcrypt
 
@@ -75,6 +76,8 @@ Anonymis-BE is a real-time messaging backend that supports temporary group chats
     PORT=your_port
     MONGO_URI=your_mongodb_connection_string
     SECRET=your_jwt_secret
+    SMTP_USER=your_gmail_address
+    SMTP_PASSWORD=your_gmail_app_password
     ```
 
 4.  **Run the application**:

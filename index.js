@@ -9,6 +9,7 @@ import { initSocket } from "./configs/socket.js";
 import { groupRoutes } from "./routes/group.route.js";
 import { serviceRoutes } from "./routes/service.route.js";
 import { deleteGroupsCronJob } from "./configs/deleteGroupsCron.js";
+import { deleteUnverifiedUsers } from "./configs/deleteUnveifiedUserCron.js";
 
 const app = express();
 
@@ -28,6 +29,7 @@ app.use("/api/group",groupRoutes)
 app.use("/api/service",serviceRoutes)
 
 deleteGroupsCronJob(io);
+deleteUnverifiedUsers();
 
 server.listen(process.env.PORT,()=>{
     console.log(`Server started at http://localhost:${process.env.PORT}`)

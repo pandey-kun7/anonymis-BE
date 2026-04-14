@@ -3,6 +3,7 @@ import jwt from "jsonwebtoken"
 import "dotenv/config";
 import { User } from "../models/user.js";
 import { OTP } from "../models/userOTP.js";
+import { sendOTPtoMail } from "../configs/mailOtp.js"
 
 
 
@@ -13,6 +14,7 @@ export const handleUserSignup = async (req, res) => {
 
     const otp = Math.floor(100000 + Math.random() * 900000).toString();
     await OTP.create({ email, otp, expiresAt: new Date(Date.now() + 5 * 60 * 1000) });
+    sendOTPtoMail(email,otp);
 
     res.status(200).json({
         success: true,
@@ -48,7 +50,7 @@ export const handleUserOtpVerification = async (req, res) => {
     res.status(200).json({
         success: true,
         message: "Verified successfully",
-        data: {"token":token,userId:user._id,userTag:user.userTag}
+        data: { "token": token, userId: user._id, userTag: user.userTag }
     })
 
 }
@@ -74,6 +76,7 @@ export const handleUserLogin = async (req, res) => {
 
     const otp = Math.floor(100000 + Math.random() * 900000).toString();
     await OTP.create({ email, otp, expiresAt: new Date(Date.now() + 5 * 60 * 1000) });
+    sendOTPtoMail(email,otp);
 
     res.status(200).json({
         success: true,
