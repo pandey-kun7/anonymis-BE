@@ -1,5 +1,8 @@
 import express from "express"
 import { User } from "../models/user.js"
+import { Group } from "../models/group.js"
+import { Message } from "../models/messages.js";
+import { Memory } from "../models/memory.js";
 
 export const handleGetUsersByInput = async (req, res) => {
     try {
@@ -45,7 +48,7 @@ export const handleUserInfoChange = async (req, res) => {
         }
 
         await User.findOneAndUpdate({ email }, {
-            $set:{
+            $set: {
                 userAlias
             }
         });
@@ -91,4 +94,74 @@ export const handleFetchUserInfo = async (req, res) => {
         })
     }
 
+}
+
+export const handleMessageStarred = async (req, res) => {
+    try {
+        const { groupId, messageId } = req.body;
+
+        const group = await Group.findById(groupId);
+        if (!group) {
+            return res.status(400).json({
+                success: false,
+                message: `Group doesn't exist`
+            })
+        }
+
+        const message = await Message.findById(messageId);
+        if (!message) {
+            return res.status(400).json({
+                success: false,
+                message: `Message doesn't exist`
+            })
+        }
+
+        if (await Memory.findOne({ messageId, groupId })) {
+            return res.status(200).json({
+                success: true,
+                message: "Memory exists"
+            })
+        }
+
+        const memory = await Memory.create({
+            groupId,
+            messageId,
+            groupName: group.groupName,
+            messageContent: message.content,
+            senderTag: message.senderTag,
+            visibleTo: group.members
+        })
+
+        return res.status(200).json({
+            success: true,
+            message: "Memory added",
+            data: memory
+        })
+
+
+    } catch (err) {
+        console.log(`Problem in handleMessagePin : ${err.message}`);
+        return res.status(500).json({
+            success: false,
+            message: "Internal server error"
+        })
+    }
+}
+
+export const handleGetAllMemory = async (req, res) => {
+    try {
+        const memories = await Memory.find({visibleTo : req.userId}).sort({pinnedAt : -1});
+
+        return res.status(200).json({
+            success : true,
+            message : "Returned memories",
+            data: memories
+        })
+    } catch (err) {
+        console.log(`Error in handleGetAllMemory : ${err.message}`);
+        return res.status(500).json({
+            success: false,
+            message: "Internal server error"
+        })
+    }
 }

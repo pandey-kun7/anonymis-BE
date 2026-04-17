@@ -3,7 +3,7 @@ import { User } from "../models/user.js"
 
 export function deleteUnverifiedUsers(){
     try{
-        cron.schedule("*/5 * * * *", async ()=>{
+        cron.schedule("*/10 * * * *", async ()=>{
             await User.deleteMany({isVerified:false});
         })
     }catch(err){

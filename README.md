@@ -6,9 +6,12 @@ Anonymis-BE is a real-time messaging backend that supports temporary group chats
 
 - **User Authentication**: Secure signup, login, and email OTP-based verification using Nodemailer, JWT, and bcrypt.
 - **Temporary Group Chats**: Users can create and join chat groups using unique group codes.
-- **Automated Cleanup**: Background cron jobs automatically delete expired groups, their message history (every minute), and unverified users (every 5 minutes).
 - **Real-time Communication**: Instant messaging and group status updates powered by Socket.io.
-- **User Management**: Search for users and update profile information.
+- **Starred Messages (Memories)**: Save important messages from temporary groups as "Memories" that persist even after the group is deleted.
+- **Automated Cleanup**: Background cron jobs automatically:
+  - Delete expired groups and their message history (every minute).
+  - Remove unverified user accounts (every 10 minutes).
+- **User Management**: Search for users by tag or alias and update profile information.
 
 ## 🛠️ Tech Stack
 
@@ -26,7 +29,7 @@ Anonymis-BE is a real-time messaging backend that supports temporary group chats
 ├── configs/            # Database, Socket.io, and Cron job configurations
 ├── controllers/        # Business logic for auth, groups, and services
 ├── middlewares/        # Authentication middleware
-├── models/             # Mongoose schemas (User, Group, Message, OTP)
+├── models/             # Mongoose schemas (User, Group, Message, OTP, Memory)
 ├── routes/             # Express API routes
 └── index.js            # Entry point of the application
 ```
@@ -44,10 +47,12 @@ Anonymis-BE is a real-time messaging backend that supports temporary group chats
 - `GET /api/group/get-user-groups` - List groups the user belongs to (Auth required).
 - `GET /api/group/group-messages/:groupId` - Retrieve message history for a group (Auth required).
 
-### Services
+### Services & Memories
 - `POST /api/service/get-users` - Search for users (Auth required).
 - `PATCH /api/service/update-userInfo` - Update user profile (Auth required).
 - `GET /api/service/user-info/:email` - Fetch specific user details (Auth required).
+- `POST /api/service/star-message` - Save a message as a "Memory" (Auth required).
+- `GET /api/service/memory` - Retrieve all saved memories for the user (Auth required).
 
 ## ⚡ Socket.io Events
 
