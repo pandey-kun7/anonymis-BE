@@ -83,3 +83,30 @@ export const handleUserLogin = async (req, res) => {
         message: "OTP sent via email"
     })
 }
+
+export const handleUserDeleteAccount = async (req,res) =>{
+    try{
+        const {email} = req.params;
+        const user = await User.findOne({email});
+        if(!user){
+            return res.status(500).json({
+                success:true,
+                message:"User doesn't exist"
+            })
+        }
+
+        await User.findOneAndDelete({email});
+
+        return res.status(200).json({
+            success:true,
+            message:"Account deleted successfulyy"
+        })
+
+    }catch(error){
+        console.log(`Problem in handleUserDeleteAccount : ${err.message}`);
+        return res.status(500).json({
+            success:false,
+            message:"Internal server error"
+        })
+    }
+}
